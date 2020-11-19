@@ -1,0 +1,28 @@
+@startuml
+SqlQueryManager -> SqlQueryManager: start
+activate SqlQueryManager
+SqlQueryManager -> queryTracker: start
+SqlQueryManager -> SqlQueryManager: enforceMemoryLimits
+SqlQueryManager -> queryTracker:getAllQueries-RUNNING
+SqlQueryManager -> ClusterMemoryManager: process(runningQueries
+note left:定时器1秒轮询
+activate ClusterMemoryManager
+ClusterMemoryManager -> ClusterMemoryManager:isClusterOutOfMemory
+ClusterMemoryManager -> QueryExecution: getUserMemoryReservation
+note left
+userMemoryReservation > userMemoryLimit
+queryKilled = true
+end note
+ClusterMemoryManager -> QueryExecution:getTotalMemoryReservation
+note left
+totalMemoryReservation > totalMemoryLimit
+queryKilled = true
+end note
+ClusterMemoryManager -> ClusterMemoryManager:updateNodes
+ClusterMemoryManager -> DiscoveryNodeManager:getNodes
+note left: notes count changed
+ClusterMemoryManager -> ClusterMemoryManager:updateMaxQueryMemory
+ClusterMemoryManager -> ClusterMemoryManager:updateMaxQueryTotalMemory
+deactivate ClusterMemoryManager
+deactivate SqlQueryManager
+@enduml
