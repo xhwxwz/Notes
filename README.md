@@ -1,3 +1,3 @@
 # Notes
-技术笔记，包括Java、linux、SQL、大数据
+技术笔记，包括Java、linux、NOSQL、大数据
 
